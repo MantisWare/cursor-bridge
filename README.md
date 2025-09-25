@@ -219,7 +219,7 @@ All consumers of the CursorBridge MCP Server interface with the same NodeJS API 
 
 Ready to get started? Installation steps can be found in our documentation:
 
-- [CursorBridge MCP Docs](https://browsertools.agentdesk.ai/) 📚
+- [CursorBridge MCP Docs](installation.md) 📚
 
 ## 🎮 Usage (The Fun Part!)
 
