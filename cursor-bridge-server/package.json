@@ -1,7 +1,7 @@
 {
   "name": "@mantisware/cursor-bridge-server",
   "version": "1.0.0-beta",
-  "description": "A browser tools server for capturing and managing browser events, logs, and screenshots",
+  "description": "The brain of browser automation! 🧠🤖 Captures browser events, logs, and screenshots with style - because debugging should be fun! ✨",
   "type": "module",
   "main": "dist/browser-connector.js",
   "bin": {
@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/browser-connector.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "update": "npm run build && npm version patch && npm publish"
   },
   "keywords": [
     "browser",
