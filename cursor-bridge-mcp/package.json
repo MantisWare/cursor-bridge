@@ -1,6 +1,6 @@
 {
   "name": "@mantisware/cursor-bridge-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP (Model Context Protocol) server for browser tools integration",
   "main": "dist/mcp-server.js",
   "bin": {
@@ -9,6 +9,14 @@
   "files": [
     "dist/**/*",
     "README.md"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "bundledDependencies": [
+    "uri-js",
+    "ajv",
+    "punycode"
   ],
   "scripts": {
     "inspect": "tsc && npx @modelcontextprotocol/inspector node -- dist/mcp-server.js",
@@ -38,8 +46,9 @@
     "llm-cost": "^1.0.5",
     "node-fetch": "^2.7.0",
     "ws": "^8.18.0",
-    "uri-js": "^4.4.1",
-    "ajv": "^8.12.0"
+    "uri-js": "4.4.1",
+    "ajv": "8.12.0",
+    "punycode": "^2.3.1"
   },
   "devDependencies": {
     "@types/ws": "^8.5.14",
