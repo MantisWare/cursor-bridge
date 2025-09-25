@@ -119,6 +119,33 @@ Add this configuration to your Cursor IDE settings. You can find the MCP setting
 - 🐛 **Debug Mode**: Add `"DEBUG": "cursor-bridge:*"` to the env section for detailed logging
 - 📁 **Local Path**: Replace `/path/to/your/cursor-bridge-mcp/` with your actual project path
 
+### ✅ **Verification Step (Test Your Setup!)**
+
+Once you've configured everything, test that your MCP connection is working! 🧪
+
+**Test Command:**
+```
+Can you check if you can access my console logs with the cursor bridge tool?
+```
+
+If everything is set up correctly, your AI should be able to access the CursorBridge MCP tools and respond with something like this:
+
+<div align="center">
+  <img src="mcp_demo.png" alt="MCP Demo - AI accessing CursorBridge tools" width="80%" height="auto">
+</div>
+
+**What to Expect:**
+- 🤖 Your AI should recognize and use the CursorBridge MCP tools
+- 📊 You should see tool calls being made to access browser data
+- 🎯 The AI should be able to retrieve console logs, network data, or take screenshots
+- ✨ If successful, you'll see the MCP tools in action!
+
+**If It's Not Working:**
+- 🔄 Make sure both servers are running (`cursor-bridge-server` and `cursor-bridge-mcp`)
+- 🌐 Ensure you have an active browser tab with the CursorBridge extension enabled
+- 🔌 Check that the Chrome extension is connected (look for the CursorBridgeMCP panel in DevTools)
+- 🚀 Try restarting Cursor IDE after adding the MCP configuration
+
 ### 🆘 Troubleshooting (AKA "Help, It's Not Working!")
 
 If things go sideways, try this troubleshooting dance:
