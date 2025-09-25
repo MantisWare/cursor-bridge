@@ -1,6 +1,6 @@
 {
   "name": "@mantisware/cursor-bridge-server",
-  "version": "1.0.0-beta",
+  "version": "1.0.0",
   "description": "The brain of browser automation! 🧠🤖 Captures browser events, logs, and screenshots with style - because debugging should be fun! ✨",
   "type": "module",
   "main": "dist/browser-connector.js",

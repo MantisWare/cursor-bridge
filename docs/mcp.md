@@ -57,7 +57,7 @@ import { z } from "zod";
 // Create an MCP server (the magic begins here!)
 const server = new McpServer({
   name: "Demo",
-  version: "1.0.0-beta", // Beta 1.0.0 - we're in the future! 🚀
+  version: "1.0.0", // 1.0.0 - we're in the future! 🚀
 });
 
 // Add an addition tool (math magic! 🧮)
@@ -102,7 +102,7 @@ The McpServer is your core interface to the MCP protocol - it's like the conduct
 ```typescript
 const server = new McpServer({
   name: "My App",
-  version: "1.0.0-beta",
+  version: "1.0.0",
 });
 ```
 
@@ -200,7 +200,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 
 const server = new McpServer({
   name: "example-server",
-  version: "1.0.0-beta",
+  version: "1.0.0",
 });
 
 // ... set up server resources, tools, and prompts ...
@@ -220,7 +220,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 
 const server = new McpServer({
   name: "example-server",
-  version: "1.0.0-beta",
+  version: "1.0.0",
 });
 
 // ... set up server resources, tools, and prompts ...
@@ -261,7 +261,7 @@ import { z } from "zod";
 
 const server = new McpServer({
   name: "Echo",
-  version: "1.0.0-beta",
+  version: "1.0.0",
 });
 
 server.resource(
@@ -306,7 +306,7 @@ import { z } from "zod";
 
 const server = new McpServer({
   name: "SQLite Explorer",
-  version: "1.0.0-beta",
+  version: "1.0.0",
 });
 
 // Helper to create DB connection
@@ -383,7 +383,7 @@ import {
 const server = new Server(
   {
     name: "example-server",
-    version: "1.0.0-beta",
+    version: "1.0.0",
   },
   {
     capabilities: {
@@ -448,7 +448,7 @@ const transport = new StdioClientTransport({
 const client = new Client(
   {
     name: "example-client",
-    version: "1.0.0-beta",
+    version: "1.0.0",
   },
   {
     capabilities: {

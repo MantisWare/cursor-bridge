@@ -1,6 +1,6 @@
 {
   "name": "@mantisware/cursor-bridge-mcp",
-  "version": "1.0.0-beta",
+  "version": "1.0.0",
   "description": "MCP (Model Context Protocol) server for browser tools integration",
   "main": "dist/mcp-server.js",
   "bin": {

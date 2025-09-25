@@ -2,7 +2,7 @@
 
 > The brain of the operation! Your AI's gateway to browser superpowers! 🧠✨
 
-**Version: Beta 1.0.0** 🚀
+**Version: 1.0.0** 🚀
 
 Meet the CursorBridge MCP Server - the Model Context Protocol (MCP) server that turns your AI into a browser debugging wizard! This server works hand-in-hand with the CursorBridge Server to give your AI the ability to see, analyze, and interact with everything happening in your browser. It's like giving your AI a pair of super-powered glasses! 👓🎯
 

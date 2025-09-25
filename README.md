@@ -10,9 +10,9 @@ Ever wished your AI could actually *see* what's happening in your browser? Well,
 
 This nifty little tool uses Anthropic's Model Context Protocol (MCP) to turn your AI into a browser whisperer that can capture, analyze, and interact with everything happening in your Chrome tabs.
 
-## 🎉 What's New in Beta 1.0.0!
+## 🎉 What's New in 1.0.0!
 
-Hold onto your hats, folks! We've just dropped Beta 1.0.0 and it's absolutely *chef's kiss* 👨‍🍳💋 Here's what's cooking:
+Hold onto your hats, folks! We've just dropped 1.0.0 and it's absolutely *chef's kiss* 👨‍🍳💋 Here's what's cooking:
 
 - 🎯 **Auto-Paste Magic**: Enable "Allow Auto-Paste into Cursor" in the DevTools panel and watch screenshots magically appear in Cursor! (Pro tip: click into the Agent input field first, or the magic won't work! ✨)
 - 🔍 **Lighthouse Suite**: We've integrated a whole arsenal of SEO, performance, accessibility, and best practice analysis tools. Your AI is now basically a web development detective! 🕵️‍♀️
@@ -27,7 +27,7 @@ Hold onto your hats, folks! We've just dropped Beta 1.0.0 and it's absolutely *c
 
 Ready to turn your AI into a browser wizard? Here's the three-step dance! 💃
 
-1. **Grab the Extension**: Install our shiny chrome extension from here: [Beta 1.0.0 CursorBridgeMCP Chrome Extension](TODO: Add URL for CursorBridge-1.0.0-beta-extension.zip) 🎁
+1. **Grab the Extension**: Install our shiny chrome extension from here: [1.0.0 CursorBridgeMCP Chrome Extension](TODO: Add URL for CursorBridge-1.0.0-extension.zip) 🎁
 2. **Feed Your IDE**: Install the MCP server in your IDE with this magic command: `npx @mantisware/cursor-bridge-mcp@latest` 🪄
 3. **Fire Up the Server**: Open a new terminal and run: `npx @mantisware/cursor-bridge-server@latest` 🔥
 

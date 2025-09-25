@@ -524,7 +524,7 @@ app.get("/.identity", (req, res) => {
   res.json({
     port: PORT,
     name: "cursor-bridge-server",
-    version: "1.0.0-beta",
+    version: "1.0.0",
     signature: "mcp-browser-connector-24x7",
   });
 });
@@ -1348,7 +1348,7 @@ export class BrowserConnector {
     this.app.get("/.identity", (req, res) => {
       res.json({
         signature: "mcp-browser-connector-24x7",
-        version: "1.0.0-beta",
+        version: "1.0.0",
       });
     });
 

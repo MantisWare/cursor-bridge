@@ -2,7 +2,7 @@
 
 > The ultimate browser whisperer! Your AI's best friend for capturing and managing browser events, logs, and screenshots! 🎯
 
-**Version: Beta 1.0.0** 🚀
+**Version: 1.0.0** 🚀
 
 Meet the CursorBridge Server - the powerful middleware that makes all the browser magic happen! This server works hand-in-hand with the CursorBridge Chrome Extension to give your AI superpowers for comprehensive browser debugging and analysis. It's like having a super-attentive assistant that never misses a thing! 👀✨
 

@@ -6,11 +6,16 @@ const archiver = require('archiver');
 
 const EXTENSION_DIR = path.join(__dirname, '..', 'cursor-bridge-extension');
 const DIST_DIR = path.join(__dirname, '..', 'dist');
-const ZIP_PATH = path.join(DIST_DIR, 'cursor-bridge-extension.zip');
+
+// Get version from package.json
+const packageJson = require('../package.json');
+const VERSION = packageJson.version;
+const ZIP_NAME = `cursor-bridge-extension-v${VERSION}.zip`;
+const ZIP_PATH = path.join(DIST_DIR, ZIP_NAME);
 
 async function buildExtension() {
   try {
-    console.log('🚀 Building Cursor Bridge Chrome Extension...');
+    console.log(`🚀 Building Cursor Bridge Chrome Extension v${VERSION}...`);
     
     // Create dist directory if it doesn't exist
     await fs.ensureDir(DIST_DIR);

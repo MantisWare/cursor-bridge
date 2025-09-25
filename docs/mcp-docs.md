@@ -348,7 +348,7 @@ const PROMPTS = {
 
 const server = new Server({
   name: "example-prompts-server",
-  version: "1.0.0-beta"
+  version: "1.0.0"
 }, {
   capabilities: {
     prompts: {}
@@ -482,7 +482,7 @@ Here's an example of implementing a basic tool in an MCP server:
 ```typescript
 const server = new Server({
   name: "example-server",
-  version: "1.0.0-beta"
+  version: "1.0.0"
 }, {
   capabilities: {
     tools: {}
@@ -1020,7 +1020,7 @@ The stdio transport enables communication through standard input and output stre
 ```typescript
 const server = new Server({
   name: "example-server",
-  version: "1.0.0-beta"
+  version: "1.0.0"
 }, {
   capabilities: {}
 });
@@ -1043,7 +1043,7 @@ const app = express();
 
 const server = new Server({
   name: "example-server",
-  version: "1.0.0-beta"
+  version: "1.0.0"
 }, {
   capabilities: {}
 });

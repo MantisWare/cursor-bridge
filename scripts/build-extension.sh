@@ -15,10 +15,13 @@ NC='\033[0m' # No Color
 # Configuration
 EXTENSION_DIR="cursor-bridge-extension"
 DIST_DIR="dist"
-ZIP_NAME="cursor-bridge-extension.zip"
+
+# Get version from package.json
+VERSION=$(node -p "require('./package.json').version")
+ZIP_NAME="cursor-bridge-extension-v${VERSION}.zip"
 ZIP_PATH="$DIST_DIR/$ZIP_NAME"
 
-echo -e "${BLUE}🚀 Building Cursor Bridge Chrome Extension...${NC}"
+echo -e "${BLUE}🚀 Building Cursor Bridge Chrome Extension v${VERSION}...${NC}"
 
 # Create dist directory if it doesn't exist
 mkdir -p "$DIST_DIR"
@@ -53,7 +56,7 @@ if [ -f "$ZIP_PATH" ]; then
     FILE_SIZE=$(ls -lh "$ZIP_PATH" | awk '{print $5}')
     
     echo -e "${GREEN}✅ Extension built successfully!${NC}"
-    echo -e "${GREEN}📦 Archive: $ZIP_PATH${NC}"
+    echo -e "${GREEN}📦 Archive: $ZIP_NAME${NC}"
     echo -e "${GREEN}📊 File size: $FILE_SIZE${NC}"
     echo -e "${BLUE}🎉 Build complete! Ready for Chrome Web Store deployment.${NC}"
 else
