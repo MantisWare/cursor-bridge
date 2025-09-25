@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/logo.png" alt="CursorBridge MCP Logo" width="400" height="auto">
+  <img src="docs/logo.png" alt="CursorBridge MCP Logo" width="100%" height="auto">
 </div>
 
 # 🚀 CursorBridge MCP
