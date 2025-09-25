@@ -370,7 +370,7 @@ We welcome contributions! 🎉
 
 Having issues? We're here to help! 🆘
 
-- **📧 Contact** - [@tedx_ai on X](https://x.com/tedx_ai)
+- **📧 Contact** - [GitHub Issues](https://github.com/MantisWare/cursor-bridge/issues)
 - **🐛 Issues** - [GitHub Issues](https://github.com/MantisWare/cursor-bridge/issues)
 - **💬 Discussions** - [GitHub Discussions](https://github.com/MantisWare/cursor-bridge/discussions)
 
@@ -380,6 +380,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Built with ❤️ by [@tedx_ai](https://x.com/tedx_ai) - because debugging should be fun! 🎉*
+*Built with ❤️ by MantisWare - because debugging should be fun! 🎉*
 
 **Remember**: This extension is the bridge between your browser and AI - it's like having a digital assistant that can see everything happening in your web development! 🦸‍♂️✨

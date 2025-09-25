@@ -248,7 +248,7 @@ tail -n 20 -F ~/Library/Application\ Support/Cursor/**/*MCP.log
 
 2. Take a screenshot of those logs, a screenshot of the node server logs from cursor-bridge-server and if possible - go into the manage extensions window in chrome and click on an error button if present in the extension we installed earlier to capture a screenshot of that too
 
-3. Contact [@tedx_ai on X](https://x.com/tedx_ai) or add an issue to the Github repo with all the requested details and we'll get back to you as soon as possible!
+3. Contact us through GitHub issues with all the requested details and we'll get back to you as soon as possible!
 
 ### 🐛 Common Issues & Errors
 
@@ -278,8 +278,8 @@ You might have chrome dev tools / the inspector window open in other tabs! Closi
 
 #### Issue: Encountering an unknown error ❓
 
-Contact [@tedx_ai](https://x.com/tedx_ai) or add an issue to the Github repo.
+Contact us through GitHub issues or add an issue to the Github repo.
 
 ---
 
-*Built with ❤️ by [@tedx_ai](https://x.com/tedx_ai) - because debugging should be fun! 🎉*
+*Built with ❤️ by MantisWare - because debugging should be fun! 🎉*
