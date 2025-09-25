@@ -45,6 +45,80 @@ You need to install **TWO** servers (don't worry, it's not as scary as it sounds
 
 After these three steps, open Chrome DevTools and look for the CursorBridgeMCP panel. It's like finding a hidden treasure! 🏴‍☠️
 
+## ⚙️ Cursor IDE Configuration (The Setup Magic!)
+
+Ready to configure Cursor IDE? Here's exactly what your MCP configuration should look like! 🎯
+
+### 📝 Cursor MCP Configuration
+
+Add this configuration to your Cursor IDE settings. You can find the MCP settings in Cursor's preferences:
+
+**For NPX (Recommended - Always Latest):**
+```json
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "npx",
+      "args": ["@mantisware/cursor-bridge-mcp@latest"],
+      "env": {}
+    }
+  }
+}
+```
+
+**For Local Development:**
+```json
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "node",
+      "args": ["/path/to/your/cursor-bridge-mcp/dist/mcp-server.js"],
+      "env": {}
+    }
+  }
+}
+```
+
+### 🔧 Alternative Configuration Options
+
+**With Custom Environment Variables:**
+```json
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "npx",
+      "args": ["@mantisware/cursor-bridge-mcp@latest"],
+      "env": {
+        "DEBUG": "cursor-bridge:*",
+        "PORT": "3001"
+      }
+    }
+  }
+}
+```
+
+**For Development with Local Files:**
+```json
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "npx",
+      "args": ["tsx", "/path/to/your/cursor-bridge-mcp/mcp-server.ts"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}
+```
+
+### 🎯 Pro Tips for Configuration! 
+
+- 🚀 **Use NPX**: The `npx` approach automatically gets the latest version - no manual updates needed!
+- 🔄 **Restart Cursor**: After adding the MCP configuration, restart Cursor IDE to activate the connection
+- 🐛 **Debug Mode**: Add `"DEBUG": "cursor-bridge:*"` to the env section for detailed logging
+- 📁 **Local Path**: Replace `/path/to/your/cursor-bridge-mcp/` with your actual project path
+
 ### 🆘 Troubleshooting (AKA "Help, It's Not Working!")
 
 If things go sideways, try this troubleshooting dance:

@@ -127,12 +127,38 @@
         font-size: 14px;
       }
 
+      .checkbox-group-2 {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .checkbox-group-2 label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #f3f4f6;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin: 0;
+      }
+
       .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         margin-bottom: 12px;
       }
 
-      .checkbox-group-2 {
-        margin-bottom: 8px;
+      .checkbox-group label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #f3f4f6;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin: 0;
       }
 
       input[type="number"],
@@ -302,6 +328,65 @@
       ::-webkit-scrollbar-thumb:hover {
         background: rgba(255, 255, 255, 0.3);
       }
+
+      /* Info icon and tooltip styling */
+      .info-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-left: 8px;
+        cursor: pointer;
+        color: #9ca3af;
+        transition: color 0.2s ease;
+        position: relative;
+        user-select: none;
+      }
+
+      .info-icon:hover {
+        color: #4f46e5;
+      }
+
+      .info-icon.active {
+        color: #4f46e5;
+      }
+
+      .tooltip {
+        position: absolute;
+        top: 0;
+        left: 500px;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.95);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+        max-width: 280px;
+        white-space: normal;
+        text-align: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.3),
+          0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol", sans-serif;
+      }
+
+      .tooltip.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(-8px);
+      }
+
+      .label-with-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
     </style>
   </head>
   <body>
@@ -319,20 +404,60 @@
         class="checkbox-group-2"
         style="margin-top: 10px; display: flex; align-items: center"
       >
-        <label>
-          <input type="checkbox" id="allow-auto-paste" />
-          Allow Auto-paste to Cursor
-        </label>
+        <div class="checkbox-group-2">
+          <label for="allow-auto-paste">
+            <input type="checkbox" id="allow-auto-paste" />
+            Allow Auto-paste to Cursor
+          </label>
+          <svg
+            class="info-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <div id="tooltip-auto-paste" class="tooltip" style="display: none">
+            Automatically pastes captured content into Cursor! No more manual
+            copy-paste dance moves!
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="settings-section">
       <h3>Screenshot Settings</h3>
       <div class="form-group">
-        <label for="screenshot-path"
-          >Provide a directory to save screenshots to (by default screenshots
-          will be saved to your downloads folder if no path is provided)</label
-        >
+        <label class="label-with-info" for="screenshot-path">
+          Provide a directory to save screenshots to (by default screenshots
+          will be saved to your downloads folder if no path is provided)
+          <svg
+            class="info-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <div
+            id="tooltip-screenshot-path"
+            class="tooltip"
+            style="display: none"
+          >
+            Choose where your beautiful screenshots should live! Leave empty for
+            the classic Downloads folder experience.
+          </div>
+        </label>
         <input
           type="text"
           id="screenshot-path"
@@ -344,7 +469,26 @@
     <div class="settings-section">
       <h3>Server Connection Settings</h3>
       <div class="form-group">
-        <label for="server-host">Server Host</label>
+        <label class="label-with-info" for="server-host">
+          Server Host
+          <svg
+            class="info-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <div id="tooltip-server-host" class="tooltip" style="display: none">
+            Where's your server hiding? Usually localhost, but could be playing
+            hide and seek elsewhere!
+          </div>
+        </label>
         <input
           type="text"
           id="server-host"
@@ -352,7 +496,26 @@
         />
       </div>
       <div class="form-group">
-        <label for="server-port">Server Port</label>
+        <label class="label-with-info" for="server-port">
+          Server Port
+          <svg
+            class="info-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <div id="tooltip-server-port" class="tooltip" style="display: none">
+            The magical door number your server listens on! 3035 is our
+            favorite, but feel free to pick your own!
+          </div>
+        </label>
         <input
           type="number"
           id="server-port"
@@ -372,6 +535,26 @@
       <div id="connection-status" style="margin-top: 8px; display: none">
         <span id="status-icon" class="status-indicator"></span>
         <span id="status-text"></span>
+      </div>
+      <div
+        id="info-display"
+        style="
+          margin-top: 8px;
+          display: none;
+          padding: 12px;
+          background: rgba(79, 70, 229, 0.1);
+          border: 1px solid rgba(79, 70, 229, 0.3);
+          border-radius: 8px;
+        "
+      >
+        <div
+          id="info-title"
+          style="font-weight: 600; color: #4f46e5; margin-bottom: 4px"
+        ></div>
+        <div
+          id="info-content"
+          style="color: #e8e8e8; font-size: 14px; line-height: 1.4"
+        ></div>
       </div>
     </div>
 
@@ -393,37 +576,163 @@
 
       <div class="settings-content" id="advanced-settings-content">
         <div class="form-group">
-          <label for="log-limit">Log Limit (number of logs)</label>
+          <label class="label-with-info" for="log-limit">
+            Log Limit (number of logs)
+            <svg
+              class="info-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div id="tooltip-log-limit" class="tooltip" style="display: none">
+              How many logs should we keep in our memory palace? More logs =
+              more context, but also more memory munching!
+            </div>
+          </label>
           <input type="number" id="log-limit" min="1" value="50" />
         </div>
 
         <div class="form-group">
-          <label for="query-limit">Query Limit (characters)</label>
+          <label class="label-with-info" for="query-limit">
+            Query Limit (characters)
+            <svg
+              class="info-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div id="tooltip-query-limit" class="tooltip" style="display: none">
+              The maximum length of your queries before they get the chop! Keep
+              it reasonable or your browser might get a tummy ache!
+            </div>
+          </label>
           <input type="number" id="query-limit" min="1" value="30000" />
         </div>
 
         <div class="form-group">
-          <label for="string-size-limit">String Size Limit (characters)</label>
+          <label class="label-with-info" for="string-size-limit">
+            String Size Limit (characters)
+            <svg
+              class="info-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div
+              id="tooltip-string-size-limit"
+              class="tooltip"
+              style="display: none"
+            >
+              How long can individual strings be before we say "that's enough!"?
+              Prevents your console from becoming a novel!
+            </div>
+          </label>
           <input type="number" id="string-size-limit" min="1" value="500" />
         </div>
 
         <div class="form-group">
-          <label for="max-log-size">Max Log Size (characters)</label>
+          <label class="label-with-info" for="max-log-size">
+            Max Log Size (characters)
+            <svg
+              class="info-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div
+              id="tooltip-max-log-size"
+              class="tooltip"
+              style="display: none"
+            >
+              The ultimate size limit for any single log entry! Keeps things
+              tidy and prevents memory overload!
+            </div>
+          </label>
           <input type="number" id="max-log-size" min="1000" value="20000" />
         </div>
 
         <div class="checkbox-group">
-          <label>
+          <label for="show-request-headers">
             <input type="checkbox" id="show-request-headers" />
             Include Request Headers
           </label>
+          <svg
+            class="info-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <div
+            id="tooltip-request-headers"
+            class="tooltip"
+            style="display: none"
+          >
+            Want to see all the juicy details about incoming requests? Headers
+            include cookies, user agents, and other fun secrets!
+          </div>
         </div>
 
         <div class="checkbox-group">
-          <label>
+          <label for="show-response-headers">
             <input type="checkbox" id="show-response-headers" />
             Include Response Headers
           </label>
+          <svg
+            class="info-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <div
+            id="tooltip-response-headers"
+            class="tooltip"
+            style="display: none"
+          >
+            The server's way of saying "here's what I'm sending back!" Includes
+            content types, cache info, and more technical goodness!
+          </div>
         </div>
       </div>
     </div>

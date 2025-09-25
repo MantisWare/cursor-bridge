@@ -979,3 +979,75 @@ wipeLogsButton.addEventListener("click", () => {
       }, 2000);
     });
 });
+
+// Handle info icon clicks for tooltips
+const infoIcons = document.querySelectorAll(".info-icon");
+const infoDisplay = document.getElementById("info-display");
+const infoTitle = document.getElementById("info-title");
+const infoContent = document.getElementById("info-content");
+
+// Map of tooltip IDs to their content
+const tooltipMap = {
+  "tooltip-auto-paste": {
+    title: "Allow Auto-paste to Cursor",
+    content: "Automatically pastes captured content into Cursor! No more manual copy-paste dance moves!"
+  },
+  "tooltip-screenshot-path": {
+    title: "Screenshot Directory",
+    content: "Choose where your beautiful screenshots should live! Leave empty for the classic Downloads folder experience."
+  },
+  "tooltip-server-host": {
+    title: "Server Host",
+    content: "Where's your server hiding? Usually localhost, but could be playing hide and seek elsewhere!"
+  },
+  "tooltip-server-port": {
+    title: "Server Port",
+    content: "The magical door number your server listens on! 3035 is our favorite, but feel free to pick your own!"
+  },
+  "tooltip-log-limit": {
+    title: "Log Limit (number of logs)",
+    content: "How many logs should we keep in our memory palace? More logs = more context, but also more memory munching!"
+  },
+  "tooltip-query-limit": {
+    title: "Query Limit (characters)",
+    content: "The maximum length of your queries before they get the chop! Keep it reasonable or your browser might get a tummy ache!"
+  },
+  "tooltip-string-size-limit": {
+    title: "String Size Limit (characters)",
+    content: "How long can individual strings be before we say \"that's enough!\"? Prevents your console from becoming a novel!"
+  },
+  "tooltip-max-log-size": {
+    title: "Max Log Size (characters)",
+    content: "The ultimate size limit for any single log entry! Keeps things tidy and prevents memory overload!"
+  },
+  "tooltip-request-headers": {
+    title: "Include Request Headers",
+    content: "Want to see all the juicy details about incoming requests? Headers include cookies, user agents, and other fun secrets!"
+  },
+  "tooltip-response-headers": {
+    title: "Include Response Headers",
+    content: "The server's way of saying \"here's what I'm sending back!\" Includes content types, cache info, and more technical goodness!"
+  }
+};
+
+infoIcons.forEach((icon) => {
+  icon.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Get the tooltip div and toggle its visibility
+    const tooltip = this.nextElementSibling;
+    if (tooltip && tooltip.classList.contains("tooltip")) {
+      // Hide all other tooltips first
+      document.querySelectorAll(".tooltip").forEach(t => {
+        t.classList.remove("show");
+        t.style.display = "none";
+      });
+      
+      // Show this tooltip
+      tooltip.style.display = "block";
+      tooltip.classList.add("show");
+    }
+  });
+});
+
