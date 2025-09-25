@@ -1,6 +1,6 @@
 {
     "name": "CursorBridge MCP",
-    "version": "1.0.0-beta",
+    "version": "1.0.0",
     "description": "Turn your AI into a browser-savvy superhero! 🦸‍♂️ Capture console logs, network requests, screenshots, and more - it's like giving your AI a pair of super-powered glasses! 👓✨",
     "manifest_version": 3,
     "devtools_page": "devtools.html",
@@ -17,5 +17,10 @@
     ],
     "background": {
       "service_worker": "background.js"
+    },
+    "icons": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
     }
 }
