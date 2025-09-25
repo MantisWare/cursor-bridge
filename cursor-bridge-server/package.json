@@ -22,7 +22,7 @@
     "chrome",
     "extension"
   ],
-  "author": "AgentDesk AI",
+  "author": "Waldo Marais (MantisWare)",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.4.1",
