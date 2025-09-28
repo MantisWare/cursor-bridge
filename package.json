@@ -32,5 +32,8 @@
     "development-tools"
   ],
   "author": "Waldo Marais (MantisWare)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "ajv": "^6.12.6"
+  }
 }
