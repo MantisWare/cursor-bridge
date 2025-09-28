@@ -280,6 +280,133 @@ You might have chrome dev tools / the inspector window open in other tabs! Closi
 
 Contact us through GitHub issues or add an issue to the Github repo.
 
+## 🔧 Advanced Troubleshooting: Dependency Issues
+
+If you're experiencing issues with the MCP server not showing tools or getting dependency-related errors, follow these steps:
+
+### 🚨 Common Error: "Cannot find module 'uri-js'" or "Cannot find module 'ajv'"
+
+This error typically occurs when NPX is using a cached version of the package with outdated dependencies. Here's how to fix it:
+
+#### Step 1: Clear NPX Cache 🧹
+
+**On macOS/Linux:**
+```bash
+rm -rf ~/.npm/_npx
+```
+
+**On Windows:**
+```bash
+rmdir /s "%USERPROFILE%\.npm\_npx"
+```
+
+#### Step 2: Verify the Fix ✅
+
+Test that the MCP server is working correctly:
+
+```bash
+echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | npx @mantisware/cursor-bridge-mcp@latest
+```
+
+**Expected Output:** You should see a JSON response with all 14 tools listed, including:
+- `getConsoleLogs`, `getConsoleErrors`, `getNetworkErrors`, `getNetworkLogs`
+- `takeScreenshot`, `getSelectedElement`, `wipeLogs`
+- `runAccessibilityAudit`, `runPerformanceAudit`, `runSEOAudit`, `runNextJSAudit`
+- `runDebuggerMode`, `runAuditMode`, `runBestPracticesAudit`
+
+#### Step 3: Restart Your MCP Client 🔄
+
+After clearing the cache and verifying the server works:
+
+1. **Close Cursor completely**
+2. **Reopen Cursor**
+3. **Check the MCP panel** - you should now see all tools available
+
+#### Step 4: Verify Both Servers Are Running 🖥️
+
+Make sure both required servers are running:
+
+**Terminal 1 - Browser Server:**
+```bash
+npx @mantisware/cursor-bridge-server@latest
+```
+
+**Terminal 2 - Test MCP Server (optional):**
+```bash
+npx @mantisware/cursor-bridge-mcp@latest
+```
+
+#### Step 5: Check Server Discovery 🔍
+
+The MCP server should automatically discover the browser server. Look for these messages in the terminal:
+
+```
+Starting server discovery process
+Successfully found server at 127.0.0.1:3035
+Successfully discovered server at 127.0.0.1:3035
+```
+
+### 🛠️ Alternative Solutions
+
+If the above steps don't work, try these alternatives:
+
+#### Option A: Use Local Installation
+Instead of using NPX, install the package locally:
+
+```bash
+npm install -g @mantisware/cursor-bridge-mcp@latest
+```
+
+Then update your Cursor MCP configuration to:
+```json
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "cursor-bridge-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
+```
+
+#### Option B: Use MCP Inspector for Testing
+Test your MCP server using the official inspector:
+
+```bash
+npx @modelcontextprotocol/inspector npx -- @mantisware/cursor-bridge-mcp@latest
+```
+
+This will open a web interface at `http://localhost:6274` where you can test all tools.
+
+#### Option C: Force Latest Version
+If you're still having issues, force NPX to use the latest version:
+
+```bash
+npx --yes @mantisware/cursor-bridge-mcp@latest
+```
+
+### 🎯 Success Indicators
+
+You'll know everything is working when:
+
+- ✅ MCP server shows "Successfully discovered server at 127.0.0.1:3035"
+- ✅ All 14 tools are listed in your MCP client
+- ✅ Tools can be called and return data (not just "No tools, prompts, or resources")
+- ✅ Browser server is running and accessible on port 3035
+
+### 🆘 Still Having Issues?
+
+If you're still experiencing problems after following these steps:
+
+1. **Check the logs** in both terminal windows for any error messages
+2. **Verify your Cursor MCP configuration** matches the examples in this guide
+3. **Make sure Chrome DevTools is open** in the tab you want to monitor
+4. **Contact us** through GitHub issues with:
+   - Screenshots of any error messages
+   - Your operating system and Node.js version
+   - The exact steps you followed
+
 ---
 
 *Built with ❤️ by MantisWare - because debugging should be fun! 🎉*
