@@ -1,6 +1,6 @@
 {
   "name": "cursor-bridge",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cursor Bridge - AI-powered browser debugging and automation tools",
   "private": true,
   "workspaces": [
