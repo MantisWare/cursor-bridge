@@ -21,6 +21,94 @@ let isDiscoveryInProgress = false;
 // Add an AbortController to cancel fetch operations
 let discoveryController = null;
 
+// Helper function to safely send runtime messages
+function safeSendMessage(message, callback) {
+  try {
+    // Check if the extension context is still valid
+    if (chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage(message, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn("Extension context may be invalidated:", chrome.runtime.lastError.message);
+          return;
+        }
+        // Call the callback if provided and no error occurred
+        if (callback && typeof callback === 'function') {
+          callback(response);
+        }
+      });
+    } else {
+      console.warn("Extension context invalidated - cannot send message:", message.type);
+    }
+  } catch (error) {
+    console.warn("Failed to send runtime message - extension context may be invalidated:", error.message);
+  }
+}
+
+// Function to show the screenshot location
+function showScreenshotLocation(path, copiedToClipboard = false) {
+  const locationDiv = document.getElementById('last-screenshot-location');
+  const pathDisplay = document.getElementById('screenshot-path-display');
+  
+  if (locationDiv && pathDisplay && path) {
+    if (copiedToClipboard) {
+      pathDisplay.innerHTML = `
+        <div style="color: #60a5fa; margin-bottom: 8px; font-weight: 500;">
+          Screenshot captured!
+        </div>
+        <div style="color: #9ca3af; font-size: 11px; margin-bottom: 4px;">
+          ${settings.allowAutoPaste ? 'Auto-paste enabled - will paste to Cursor automatically' : 'Saved to:'}
+        </div>
+        <div style="font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; background: rgba(0, 0, 0, 0.2); padding: 4px 8px; border-radius: 4px; word-break: break-all; color: #60a5fa; font-size: 11px;">
+          ${path}
+        </div>
+      `;
+    } else {
+      pathDisplay.textContent = path;
+    }
+    
+    locationDiv.style.display = 'flex';
+    
+    // Hide the location after 10 seconds
+    setTimeout(() => {
+      locationDiv.style.display = 'none';
+    }, 10000);
+  }
+}
+
+// Function to show screenshot error messages
+function showScreenshotError(errorMessage, isPermissionError = false) {
+  const locationDiv = document.getElementById('last-screenshot-location');
+  const pathDisplay = document.getElementById('screenshot-path-display');
+  
+  if (locationDiv && pathDisplay) {
+    if (isPermissionError) {
+      // Show permission-specific error message
+      pathDisplay.innerHTML = `
+        <div style="color: #f87171; margin-bottom: 8px;">
+          <strong>Permission denied!</strong>
+        </div>
+        <div style="color: #e5e7eb; font-size: 11px; line-height: 1.4;">
+          Please click on the extension icon in your browser toolbar and allow access to capture screenshots.
+        </div>
+      `;
+    } else {
+      // Show generic error message
+      pathDisplay.innerHTML = `
+        <div style="color: #f87171;">
+          <strong>Error:</strong> ${errorMessage}
+        </div>
+      `;
+    }
+    
+    locationDiv.style.display = 'flex';
+    
+    // Hide the error after 8 seconds
+    setTimeout(() => {
+      locationDiv.style.display = 'none';
+    }, 8000);
+  }
+}
+
 // Load saved settings on startup
 chrome.storage.local.get(["browserConnectorSettings"], (result) => {
   if (result.browserConnectorSettings) {
@@ -362,7 +450,7 @@ function updateUIFromSettings() {
 function saveSettings() {
   chrome.storage.local.set({ browserConnectorSettings: settings });
   // Notify devtools.js about settings change
-  chrome.runtime.sendMessage({
+  safeSendMessage({
     type: "SETTINGS_UPDATED",
     settings,
   });
@@ -928,7 +1016,7 @@ captureScreenshotButton.addEventListener("click", () => {
   captureScreenshotButton.textContent = "Capturing...";
 
   // Send message to background script to capture screenshot
-  chrome.runtime.sendMessage(
+  safeSendMessage(
     {
       type: "CAPTURE_SCREENSHOT",
       tabId: chrome.devtools.inspectedWindow.tabId,
@@ -939,12 +1027,30 @@ captureScreenshotButton.addEventListener("click", () => {
       if (!response) {
         captureScreenshotButton.textContent = "Failed to capture!";
         console.error("Screenshot capture failed: No response received");
+        showScreenshotError("No response received from extension. Please try clicking the extension icon to grant permissions.", true);
       } else if (!response.success) {
         captureScreenshotButton.textContent = "Failed to capture!";
         console.error("Screenshot capture failed:", response.error);
+        
+        // Check if it's a permission-related error
+        const isPermissionError = response.error && (
+          response.error.toLowerCase().includes('permission') ||
+          response.error.toLowerCase().includes('denied') ||
+          response.error.toLowerCase().includes('access') ||
+          response.error.toLowerCase().includes('blocked') ||
+          response.error.toLowerCase().includes('cannot') ||
+          response.error.toLowerCase().includes('unable') ||
+          response.error.toLowerCase().includes('failed to capture') ||
+          response.error.toLowerCase().includes('captureVisibleTab')
+        );
+        
+        showScreenshotError(response.error, isPermissionError);
       } else {
         captureScreenshotButton.textContent = `Captured: ${response.title}`;
         console.log("Screenshot captured successfully:", response.path);
+        
+        // Show the screenshot location with clipboard info
+        showScreenshotLocation(response.path, true);
       }
       setTimeout(() => {
         captureScreenshotButton.textContent = "Capture Screenshot";

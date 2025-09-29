@@ -350,6 +350,29 @@ async function sendToBrowserConnector(logData) {
     });
 }
 
+// Helper function to safely send runtime messages
+function safeSendMessage(message, callback) {
+  try {
+    // Check if the extension context is still valid
+    if (chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage(message, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn("Extension context may be invalidated:", chrome.runtime.lastError.message);
+          return;
+        }
+        // Call the callback if provided and no error occurred
+        if (callback && typeof callback === 'function') {
+          callback(response);
+        }
+      });
+    } else {
+      console.warn("Extension context invalidated - cannot send message:", message.type);
+    }
+  } catch (error) {
+    console.warn("Failed to send runtime message - extension context may be invalidated:", error.message);
+  }
+}
+
 // Validate server identity
 async function validateServerIdentity() {
   try {
@@ -371,7 +394,7 @@ async function validateServerIdentity() {
       );
 
       // Notify about the connection failure
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: "SERVER_VALIDATION_FAILED",
         reason: "http_error",
         status: response.status,
@@ -389,7 +412,7 @@ async function validateServerIdentity() {
       console.error("Server identity validation failed: Invalid signature");
 
       // Notify about the invalid signature
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: "SERVER_VALIDATION_FAILED",
         reason: "invalid_signature",
         serverHost: settings.serverHost,
@@ -404,7 +427,7 @@ async function validateServerIdentity() {
     );
 
     // Notify about successful validation
-    chrome.runtime.sendMessage({
+    safeSendMessage({
       type: "SERVER_VALIDATION_SUCCESS",
       serverInfo: identity,
       serverHost: settings.serverHost,
@@ -416,7 +439,7 @@ async function validateServerIdentity() {
     console.error("Server identity validation failed:", error);
 
     // Notify about the connection error
-    chrome.runtime.sendMessage({
+    safeSendMessage({
       type: "SERVER_VALIDATION_FAILED",
       reason: "connection_error",
       error: error.message,
@@ -812,7 +835,7 @@ async function setupWebSocket() {
       heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
 
       // Notify that connection is successful
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: "WEBSOCKET_CONNECTED",
         serverHost: settings.serverHost,
         serverPort: settings.serverPort,
@@ -820,7 +843,7 @@ async function setupWebSocket() {
 
       // Send the current URL to the server right after connection
       // This ensures the server has the URL even if no navigation occurs
-      chrome.runtime.sendMessage(
+      safeSendMessage(
         {
           type: "GET_CURRENT_URL",
           tabId: chrome.devtools.inspectedWindow.tabId,
@@ -844,7 +867,7 @@ async function setupWebSocket() {
             );
 
             // Send the URL to the server via the background script
-            chrome.runtime.sendMessage({
+            safeSendMessage({
               type: "UPDATE_SERVER_URL",
               tabId: chrome.devtools.inspectedWindow.tabId,
               url: response.url,
@@ -878,7 +901,7 @@ async function setupWebSocket() {
             );
 
             // Send the URL to the server
-            chrome.runtime.sendMessage({
+            safeSendMessage({
               type: "UPDATE_SERVER_URL",
               tabId: chrome.devtools.inspectedWindow.tabId,
               url: tabs[0].url,
@@ -1010,7 +1033,7 @@ async function setupWebSocket() {
           const maxRetries = 2;
 
           const requestCurrentUrl = () => {
-            chrome.runtime.sendMessage(
+            safeSendMessage(
               {
                 type: "GET_CURRENT_URL",
                 tabId: chrome.devtools.inspectedWindow.tabId,

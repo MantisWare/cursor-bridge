@@ -22,6 +22,67 @@ import * as net from "net";
 import { runBestPracticesAudit } from "./lighthouse/best-practices.js";
 
 /**
+ * Checks if the current process has write permissions to a directory
+ * @param dirPath - The directory path to check
+ * @returns Promise<{hasPermission: boolean, error?: string}>
+ */
+async function checkWritePermission(dirPath: string): Promise<{hasPermission: boolean, error?: string}> {
+  try {
+    // First check if the directory exists
+    const stats = await fs.promises.stat(dirPath).catch(() => null);
+    
+    if (stats) {
+      // Directory exists, check if it's writable
+      try {
+        const testFile = path.join(dirPath, `.cursor-bridge-test-${Date.now()}.tmp`);
+        await fs.promises.writeFile(testFile, 'test');
+        await fs.promises.unlink(testFile);
+        return { hasPermission: true };
+      } catch (err) {
+        const error = err instanceof Error ? err.message : String(err);
+        if (error.includes('EACCES') || error.includes('permission denied')) {
+          return { 
+            hasPermission: false, 
+            error: `Permission denied: Cannot write to directory "${dirPath}". Please check your file permissions or choose a different location.` 
+          };
+        }
+        return { 
+          hasPermission: false, 
+          error: `Cannot write to directory "${dirPath}": ${error}` 
+        };
+      }
+    } else {
+      // Directory doesn't exist, check if parent directory is writable
+      const parentDir = path.dirname(dirPath);
+      try {
+        const testFile = path.join(parentDir, `.cursor-bridge-test-${Date.now()}.tmp`);
+        await fs.promises.writeFile(testFile, 'test');
+        await fs.promises.unlink(testFile);
+        return { hasPermission: true };
+      } catch (err) {
+        const error = err instanceof Error ? err.message : String(err);
+        if (error.includes('EACCES') || error.includes('permission denied')) {
+          return { 
+            hasPermission: false, 
+            error: `Permission denied: Cannot create directory "${dirPath}" because parent directory "${parentDir}" is not writable. Please check your file permissions or choose a different location.` 
+          };
+        }
+        return { 
+          hasPermission: false, 
+          error: `Cannot create directory "${dirPath}": ${error}` 
+        };
+      }
+    }
+  } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
+    return { 
+      hasPermission: false, 
+      error: `Failed to check permissions for "${dirPath}": ${error}` 
+    };
+  }
+}
+
+/**
  * Converts a file path to the appropriate format for the current platform
  * Handles Windows, WSL, macOS and Linux path formats (because paths are like snowflakes - each one is unique! ❄️)
  *
@@ -133,17 +194,17 @@ function convertPathForCurrentPlatform(inputPath: string): string {
 
 // Function to get default screenshots folder (where all the screenshot magic happens! 📸✨)
 function getDefaultDownloadsFolder(): string {
-  // Use the project root directory instead of Downloads
-  const projectRoot = process.cwd();
-  const screenshotsPath = path.join(projectRoot, "screenshots");
+  // Use the user's Downloads folder as the default
+  const homeDir = os.homedir();
+  const downloadsPath = path.join(homeDir, "Downloads");
   
-  // Create the screenshots directory if it doesn't exist
-  if (!fs.existsSync(screenshotsPath)) {
-    fs.mkdirSync(screenshotsPath, { recursive: true });
-    console.log(`📁 Created screenshots directory at: ${screenshotsPath}`);
+  // Ensure the Downloads directory exists
+  if (!fs.existsSync(downloadsPath)) {
+    fs.mkdirSync(downloadsPath, { recursive: true });
+    console.log(`📁 Created Downloads directory at: ${downloadsPath}`);
   }
   
-  return screenshotsPath;
+  return downloadsPath;
 }
 
 // We store logs in memory (like a digital diary of your browser's adventures! 📝✨)
@@ -774,7 +835,7 @@ export class BrowserConnector {
         console.log("Browser Connector: Request body:", req.body);
         try {
           console.log("Received screenshot capture request");
-          const { data, path: outputPath } = req.body;
+          const { data, path: outputPath, autoPaste } = req.body;
 
           if (!data) {
             console.log("Screenshot request missing data");
@@ -802,6 +863,97 @@ export class BrowserConnector {
           // Write the file
           fs.writeFileSync(fullPath, base64Data, "base64");
           console.log("Screenshot saved successfully");
+
+          // Check if running on macOS before executing AppleScript
+          if (os.platform() === "darwin" && autoPaste === true) {
+            console.log(
+              "Browser Connector: Running on macOS with auto-paste enabled, executing AppleScript to paste into Cursor"
+            );
+
+            // Create the AppleScript to copy the image to clipboard and paste into Cursor
+            const appleScript = `
+              -- Set path to the screenshot
+              set imagePath to "${fullPath}"
+              
+              -- Copy the image to clipboard
+              try
+                set the clipboard to (read (POSIX file imagePath) as «class PNGf»)
+              on error errMsg
+                log "Error copying image to clipboard: " & errMsg
+                return "Failed to copy image to clipboard: " & errMsg
+              end try
+              
+              -- Activate Cursor application
+              try
+                tell application "Cursor"
+                  activate
+                end tell
+              on error errMsg
+                log "Error activating Cursor: " & errMsg
+                return "Failed to activate Cursor: " & errMsg
+              end try
+              
+              -- Wait for the application to fully activate
+              delay 3
+              
+              -- Try to interact with Cursor
+              try
+                tell application "System Events"
+                  tell process "Cursor"
+                    -- Get the frontmost window
+                    if (count of windows) is 0 then
+                      return "No windows found in Cursor"
+                    end if
+                    
+                    set cursorWindow to window 1
+                    
+                    -- Try to find text input area
+                    try
+                      -- Look for text areas or text fields
+                      set textAreas to UI elements of cursorWindow whose class is "Text Area"
+                      if (count of textAreas) > 0 then
+                        set inputElement to item 1 of textAreas
+                        set focused of inputElement to true
+                        delay 0.5
+                        keystroke "v" using command down
+                        return "Successfully pasted screenshot into Cursor"
+                      end if
+                    end try
+                    
+                    -- Fallback: just use Command+V on the active window
+                    keystroke "v" using command down
+                    return "Used fallback method: Command+V on active window"
+                  end tell
+                end tell
+              on error errMsg
+                log "Error in System Events block: " & errMsg
+                return "Failed in System Events: " & errMsg
+              end try
+            `;
+
+            // Execute the AppleScript
+            exec(`osascript -e '${appleScript}'`, (error, stdout, stderr) => {
+              if (error) {
+                console.error(
+                  `Browser Connector: Error executing AppleScript: ${error.message}`
+                );
+                console.error(`Browser Connector: stderr: ${stderr}`);
+              } else {
+                console.log(`Browser Connector: AppleScript executed successfully`);
+                console.log(`Browser Connector: stdout: ${stdout}`);
+              }
+            });
+          } else {
+            if (os.platform() === "darwin" && !autoPaste) {
+              console.log(
+                `Browser Connector: Running on macOS but auto-paste is disabled, skipping AppleScript execution`
+              );
+            } else {
+              console.log(
+                `Browser Connector: Not running on macOS, skipping AppleScript execution`
+              );
+            }
+          }
 
           res.json({
             path: fullPath,
@@ -1033,6 +1185,15 @@ export class BrowserConnector {
         throw new Error("No screenshot data received from Chrome extension");
       }
 
+      // Check write permissions before attempting to create directory
+      console.log(`Browser Connector: Checking write permissions for: ${targetPath}`);
+      const permissionCheck = await checkWritePermission(targetPath);
+      
+      if (!permissionCheck.hasPermission) {
+        console.error(`Browser Connector: Permission check failed: ${permissionCheck.error}`);
+        throw new Error(permissionCheck.error ?? "Permission denied: Cannot write to screenshot directory");
+      }
+
       try {
         fs.mkdirSync(targetPath, { recursive: true });
         console.log(`Browser Connector: Created directory: ${targetPath}`);
@@ -1041,11 +1202,26 @@ export class BrowserConnector {
           `Browser Connector: Error creating directory: ${targetPath}`,
           err
         );
-        throw new Error(
-          `Failed to create screenshot directory: ${
-            err instanceof Error ? err.message : String(err)
-          }`
-        );
+        const error = err instanceof Error ? err.message : String(err);
+        
+        // Provide more specific error messages based on the error type
+        if (error.includes('EACCES') || error.includes('permission denied')) {
+          throw new Error(
+            `Permission denied: Cannot create screenshot directory "${targetPath}". Please check your file permissions or choose a different location.`
+          );
+        } else if (error.includes('ENOENT')) {
+          throw new Error(
+            `Directory not found: Cannot create screenshot directory "${targetPath}". The parent directory may not exist.`
+          );
+        } else if (error.includes('ENOSPC')) {
+          throw new Error(
+            `No space left: Cannot create screenshot directory "${targetPath}". Please free up disk space.`
+          );
+        } else {
+          throw new Error(
+            `Failed to create screenshot directory "${targetPath}": ${error}`
+          );
+        }
       }
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -1065,11 +1241,30 @@ export class BrowserConnector {
           `Browser Connector: Error saving screenshot to: ${fullPath}`,
           err
         );
-        throw new Error(
-          `Failed to save screenshot: ${
-            err instanceof Error ? err.message : String(err)
-          }`
-        );
+        const error = err instanceof Error ? err.message : String(err);
+        
+        // Provide more specific error messages based on the error type
+        if (error.includes('EACCES') || error.includes('permission denied')) {
+          throw new Error(
+            `Permission denied: Cannot save screenshot to "${fullPath}". Please check your file permissions or choose a different location.`
+          );
+        } else if (error.includes('ENOSPC')) {
+          throw new Error(
+            `No space left: Cannot save screenshot to "${fullPath}". Please free up disk space.`
+          );
+        } else if (error.includes('ENOENT')) {
+          throw new Error(
+            `Directory not found: Cannot save screenshot to "${fullPath}". The directory may have been deleted.`
+          );
+        } else if (error.includes('EMFILE') || error.includes('ENFILE')) {
+          throw new Error(
+            `Too many open files: Cannot save screenshot to "${fullPath}". Please close some applications and try again.`
+          );
+        } else {
+          throw new Error(
+            `Failed to save screenshot to "${fullPath}": ${error}`
+          );
+        }
       }
 
       // Check if running on macOS before executing AppleScript
