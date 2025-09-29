@@ -292,6 +292,8 @@ This error typically occurs when NPX is using a cached version of the package wi
 
 **On macOS/Linux:**
 ```bash
+npx clear-npx-cache
+# or
 rm -rf ~/.npm/_npx
 ```
 
