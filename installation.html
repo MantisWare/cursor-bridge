@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CursorBridge MCP - Installation Guide</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #0a1b66 0%, #000000 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        max-width: 300px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+
+      .logo-small {
+        max-width: 150px;
+        height: auto;
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 3rem;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 30px;
+      }
+
+      .content {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #667eea;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #34495e;
+        font-size: 1.5rem;
+        margin: 25px 0 15px 0;
+      }
+
+      h4 {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        margin: 20px 0 10px 0;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .feature-card {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        border-left: 5px solid #667eea;
+        transition: transform 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-card h4 {
+        color: #667eea;
+        margin-bottom: 15px;
+      }
+
+      .step {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        border-left: 5px solid #27ae60;
+      }
+
+      .step h4 {
+        color: #27ae60;
+        margin-bottom: 15px;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .code-block code {
+        color: #ecf0f1;
+      }
+
+      .warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 5px solid #f39c12;
+      }
+
+      .warning h4 {
+        color: #d68910;
+        margin-bottom: 10px;
+      }
+
+      .success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 5px solid #27ae60;
+      }
+
+      .success h4 {
+        color: #155724;
+        margin-bottom: 10px;
+      }
+
+      .download-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 30px 0;
+        text-align: center;
+      }
+
+      .download-button {
+        display: inline-block;
+        background: white;
+        color: #667eea;
+        padding: 15px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        margin: 10px;
+        transition: transform 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .download-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .architecture-diagram {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 30px 0;
+        text-align: center;
+        font-family: monospace;
+      }
+
+      .toc {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 30px 0;
+      }
+
+      .toc h3 {
+        color: #667eea;
+        margin-bottom: 15px;
+      }
+
+      .toc ul {
+        list-style: none;
+      }
+
+      .toc li {
+        margin: 8px 0;
+      }
+
+      .toc a {
+        color: #667eea;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .toc a:hover {
+        color: #764ba2;
+      }
+
+      .emoji {
+        font-size: 1.2em;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .content {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="logo.png" alt="CursorBridge MCP Logo" class="logo" />
+        <h1>🚀 CursorBridge MCP</h1>
+        <p class="subtitle">Turn your AI into a browser-savvy superhero! 🦸‍♂️</p>
+        <br />
+        <p>
+          Created by Waldo Marais (<a href="https://mantisware.com"
+            >MantisWare</a
+          >)
+        </p>
+      </div>
+
+      <div class="content">
+        <div class="toc">
+          <h3>📋 Table of Contents</h3>
+          <ul>
+            <li><a href="#overview">🎯 Overview</a></li>
+            <li><a href="#requirements">📋 Requirements</a></li>
+            <li>
+              <a href="#chrome-extension">📥 Chrome Extension Installation</a>
+            </li>
+            <li><a href="#mcp-setup">⚙️ MCP Configuration</a></li>
+            <li><a href="#server-setup">🖥️ Server Setup</a></li>
+            <li><a href="#verification">✅ Verification</a></li>
+            <li><a href="#troubleshooting">🆘 Troubleshooting</a></li>
+          </ul>
+        </div>
+
+        <section id="overview">
+          <h2>🎯 What is CursorBridge MCP?</h2>
+          <p>
+            Ever wished your AI could actually <em>see</em> what's happening in
+            your browser? Well, wish no more! CursorBridge MCP is like giving
+            your AI a pair of super-powered glasses that let it peek into your
+            browser, take screenshots, and even run audits on your web pages.
+            It's basically browser telepathy for your coding assistant! 🧠✨
+          </p>
+
+          <p>
+            This nifty little tool uses Anthropic's Model Context Protocol (MCP)
+            to turn your AI into a browser whisperer that can capture, analyze,
+            and interact with everything happening in your Chrome tabs.
+          </p>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <h4>🎯 Auto-Paste Magic</h4>
+              <p>
+                Enable "Allow Auto-Paste into Cursor" in the DevTools panel and
+                watch screenshots magically appear in Cursor!
+              </p>
+            </div>
+            <div class="feature-card">
+              <h4>🔍 Lighthouse Suite</h4>
+              <p>
+                Integrated SEO, performance, accessibility, and best practice
+                analysis tools. Your AI is now a web development detective!
+              </p>
+            </div>
+            <div class="feature-card">
+              <h4>⚡ NextJS Superpowers</h4>
+              <p>
+                Added NextJS-specific prompts to turbocharge your SEO game.
+                Because why settle for good when you can be amazing?
+              </p>
+            </div>
+            <div class="feature-card">
+              <h4>🐛 Debugger Mode</h4>
+              <p>
+                A new tool that runs all debugging tools in sequence with a
+                reasoning prompt. It's like having a debugging sidekick!
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="requirements">
+          <h2>📋 Requirements</h2>
+          <div class="warning">
+            <h4>⚠️ Before You Start</h4>
+            <p>Make sure you have the following installed on your machine:</p>
+            <ul>
+              <li>
+                🟢 <strong>Node.js 14 or higher</strong> (the foundation of
+                everything!)
+              </li>
+              <li>
+                🌐
+                <strong>Google Chrome or Chromium-based Browser</strong>
+                (required for audit functionality!)
+              </li>
+              <li>
+                🤖 <strong>MCP Client Application</strong> (Cursor, Windsurf,
+                RooCode, Cline, Continue, Zed, Claude Desktop)
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="chrome-extension">
+          <h2>📥 Chrome Extension Installation</h2>
+
+          <h3>Option A: Chrome Web Store (Recommended)</h3>
+          <div class="download-section">
+            <h3>🎉 Get CursorBridge from Chrome Web Store</h3>
+            <p>
+              Install the official extension directly from the Chrome Web Store
+              for automatic updates and security.
+            </p>
+            <a href="#" class="download-button"
+              >📥 Install from Chrome Web Store</a
+            >
+            <p><small>Coming soon to the Chrome Web Store!</small></p>
+          </div>
+
+          <h3>Option B: Manual Installation (Developer Mode)</h3>
+          <div class="step">
+            <h4>Step 1: Download the Extension</h4>
+            <p>Download the extension zip file from our distribution folder:</p>
+            <div class="download-section">
+              <a
+                href="https://github.com/MantisWare/cursor-bridge/releases/download/v1.0.0/cursor-bridge-extension-v1.0.0.zip"
+                class="download-button"
+                download
+                >📦 Download Extension (v1.0.0)</a
+              >
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>Step 2: Enable Developer Mode</h4>
+            <ol>
+              <li>
+                Open Chrome and navigate to <code>chrome://extensions/</code>
+              </li>
+              <li>
+                Toggle on <strong>"Developer mode"</strong> in the top right
+                corner
+              </li>
+              <li>Click <strong>"Load unpacked"</strong> button</li>
+            </ol>
+          </div>
+
+          <div class="step">
+            <h4>Step 3: Install the Extension</h4>
+            <ol>
+              <li>Extract the downloaded zip file to a folder</li>
+              <li>Select the extracted folder when prompted by Chrome</li>
+              <li>
+                You should see <strong>"CursorBridge MCP"</strong> in your
+                extensions list
+              </li>
+            </ol>
+          </div>
+
+          <div class="success">
+            <h4>✅ Extension Installed Successfully!</h4>
+            <p>
+              You should now see the CursorBridge MCP extension in your Chrome
+              extensions list. Make sure it's enabled!
+            </p>
+          </div>
+        </section>
+
+        <section id="mcp-setup">
+          <h2>⚙️ MCP Configuration</h2>
+
+          <h3>Cursor IDE Configuration</h3>
+          <div class="step">
+            <h4>Step 1: Open Cursor Settings</h4>
+            <ol>
+              <li>Open Cursor IDE</li>
+              <li>Go to <strong>Settings</strong> (Cmd/Ctrl + ,)</li>
+              <li>Navigate to <strong>Features</strong></li>
+              <li>Scroll down to <strong>MCP Servers</strong></li>
+              <li>Click <strong>"Add new MCP server"</strong></li>
+            </ol>
+          </div>
+
+          <div class="step">
+            <h4>Step 2: Configure MCP Server</h4>
+            <p>Add the following configuration:</p>
+            <div class="code-block">
+              <pre>
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "npx",
+      "args": ["@mantisware/cursor-bridge-mcp@latest"],
+      "env": {}
+    }
+  }
+}</pre
+              >
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>Step 3: Alternative Configurations</h4>
+            <h5>With Custom Environment Variables:</h5>
+            <div class="code-block">
+              <pre>
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "npx",
+      "args": ["@mantisware/cursor-bridge-mcp@latest"],
+      "env": {
+        "DEBUG": "cursor-bridge:*",
+        "PORT": "3001"
+      }
+    }
+  }
+}</pre
+              >
+            </div>
+
+            <h5>For Local Development:</h5>
+            <div class="code-block">
+              <pre>
+{
+  "mcpServers": {
+    "cursor-bridge-mcp": {
+      "command": "node",
+      "args": ["/path/to/your/cursor-bridge-mcp/dist/mcp-server.js"],
+      "env": {}
+    }
+  }
+}</pre
+              >
+            </div>
+          </div>
+
+          <div class="warning">
+            <h4>💡 Pro Tips for Configuration!</h4>
+            <ul>
+              <li>
+                🚀 <strong>Use NPX</strong>: The <code>npx</code> approach
+                automatically gets the latest version - no manual updates
+                needed!
+              </li>
+              <li>
+                🔄 <strong>Restart Cursor</strong>: After adding the MCP
+                configuration, restart Cursor IDE to activate the connection
+              </li>
+              <li>
+                🐛 <strong>Debug Mode</strong>: Add
+                <code>"DEBUG": "cursor-bridge:*"</code> to the env section for
+                detailed logging
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="server-setup">
+          <h2>🖥️ Server Setup</h2>
+
+          <div class="step">
+            <h4>Step 1: Start the CursorBridge Server</h4>
+            <p>Open a terminal and run the following command:</p>
+            <div class="code-block">
+              <pre>npx @mantisware/cursor-bridge-server@latest</pre>
+            </div>
+            <p>
+              This server aggregates logs from the Chrome extension and sets up
+              websockets for screenshot capture.
+            </p>
+          </div>
+
+          <div class="step">
+            <h4>Step 2: Start the MCP Server</h4>
+            <p>In another terminal, run:</p>
+            <div class="code-block">
+              <pre>npx @mantisware/cursor-bridge-mcp@latest</pre>
+            </div>
+            <p>This is the MCP server that your IDE will connect to.</p>
+          </div>
+
+          <div class="warning">
+            <h4>⚠️ Important Notes</h4>
+            <ul>
+              <li>
+                The cursor-bridge-server runs on <strong>port 3035</strong>
+              </li>
+              <li>Make sure no other processes are using this port</li>
+              <li>
+                You need <strong>BOTH</strong> servers running for full
+                functionality
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="verification">
+          <h2>✅ Verification & Testing</h2>
+
+          <div class="step">
+            <h4>Step 1: Open Chrome DevTools</h4>
+            <ol>
+              <li>
+                Right-click on any web page and select
+                <strong>"Inspect"</strong>
+              </li>
+              <li>
+                Look for the <strong>"CursorBridgeMCP"</strong> panel in the
+                DevTools
+              </li>
+              <li>
+                You should see options for screenshots, log management, and
+                settings
+              </li>
+            </ol>
+          </div>
+
+          <div class="step">
+            <h4>Step 2: Test MCP Connection</h4>
+            <p>In your Cursor IDE, try asking your AI:</p>
+            <div class="code-block">
+              <pre>
+Can you check if you can access my console logs with the cursor bridge tool?</pre
+              >
+            </div>
+            <img
+              src="mcp_demo.png"
+              alt="MCP Demo - AI accessing CursorBridge tools"
+              width="80%"
+              height="auto"
+            />
+            <p>
+              If everything is set up correctly, you'll see the MCP tools in
+              action!
+            </p>
+          </div>
+
+          <div class="success">
+            <h4>🎉 Success Indicators</h4>
+            <ul>
+              <li>
+                🤖 Your AI should recognize and use the CursorBridge MCP tools
+              </li>
+              <li>
+                📊 You should see tool calls being made to access browser data
+              </li>
+              <li>
+                🎯 The AI should be able to retrieve console logs, network data,
+                or take screenshots
+              </li>
+              <li>✨ You'll see the MCP tools in action!</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="troubleshooting">
+          <h2>🆘 Troubleshooting</h2>
+
+          <h3>Common Issues & Solutions</h3>
+
+          <div class="warning">
+            <h4>🐛 Screenshot tool is failing</h4>
+            <p>
+              Make sure to use
+              <code>npx @mantisware/cursor-bridge-mcp@latest</code> instead to
+              explicitly use the latest working version.
+            </p>
+          </div>
+
+          <div class="warning">
+            <h4>📁 Cannot see my screenshots</h4>
+            <p>
+              Screenshots are saved to a <code>screenshots</code> folder in your
+              project root directory. The folder will be created automatically
+              if it doesn't exist!
+            </p>
+          </div>
+
+          <div class="warning">
+            <h4>📝 Not seeing any logs</h4>
+            <p>
+              Make sure to open the Chrome dev tools console in the browser tab
+              that you want to capture logs from.
+            </p>
+          </div>
+
+          <div class="warning">
+            <h4>📊 Seeing too many logs</h4>
+            <p>
+              Close down any other tabs that have the Chrome dev tools open.
+              CursorBridge will capture logs across many tabs.
+            </p>
+          </div>
+
+          <div class="warning">
+            <h4>🧹 Logs keep disappearing!</h4>
+            <p>
+              Anytime you refresh the page or restart the node process running
+              the cursor-bridge-server, your logs will be wiped.
+            </p>
+          </div>
+
+          <h3>Getting Help</h3>
+          <div class="step">
+            <h4>Debug Logs</h4>
+            <p>
+              Run this command in a new terminal to monitor the Cursor MCP logs:
+            </p>
+            <div class="code-block">
+              <pre>
+tail -n 20 -F ~/Library/Application\ Support/Cursor/**/*MCP.log</pre
+              >
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>Contact Support</h4>
+            <p>If you're still having issues:</p>
+            <ol>
+              <li>Take screenshots of the error logs</li>
+              <li>Capture the node server logs from cursor-bridge-server</li>
+              <li>Check the Chrome extension for any error messages</li>
+              <li>
+                Contact us through GitHub issues with all the requested details
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <section>
+          <h2>🏗️ Architecture Overview</h2>
+          <p>
+            Meet the three musketeers that make all this browser magic possible!
+            🎭
+          </p>
+
+          <div class="architecture-diagram">
+            <pre>
+┌─────────────┐     ┌──────────────┐     ┌───────────────┐     ┌─────────────┐
+│  MCP Client │ ──► │  MCP Server  │ ──► │  Node Server  │ ──► │   Chrome    │
+│  (e.g.      │ ◄── │  (Protocol   │ ◄── │ (Middleware)  │ ◄── │  Extension  │
+│   Cursor)   │     │   Handler)   │     │               │     │             │
+└─────────────┘     └──────────────┘     └───────────────┘     └─────────────┘
+                    </pre
+            >
+          </div>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <h4>🔌 Chrome Extension</h4>
+              <p>
+                Your browser's new best friend! Captures screenshots, console
+                logs, network activity, and DOM elements.
+              </p>
+            </div>
+            <div class="feature-card">
+              <h4>🖥️ Node Server</h4>
+              <p>
+                The ultimate middleman! Facilitates communication between the
+                Chrome extension and any MCP server.
+              </p>
+            </div>
+            <div class="feature-card">
+              <h4>🤖 MCP Server</h4>
+              <p>
+                The brain of the operation! A Model Context Protocol server that
+                gives AI clients standardized tools.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div class="success">
+          <h4>🎉 Congratulations!</h4>
+          <p>
+            <strong
+              >You've successfully installed and configured CursorBridge
+              MCP!</strong
+            >
+            🎉
+          </p>
+          <p>
+            After these steps, open Chrome DevTools and look for the
+            CursorBridgeMCP panel. It's like finding a hidden treasure! 🏴‍☠️
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
