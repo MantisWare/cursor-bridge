@@ -9,7 +9,6 @@
       "debugger",
       "storage",
       "tabs",
-      "tabCapture",
       "windows"
     ],
     "host_permissions": [
