@@ -4,6 +4,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import path from "path";
 import fs from "fs";
+import { spawn, ChildProcess } from "child_process";
 
 // Create the MCP server
 const server = new McpServer({
@@ -15,6 +16,10 @@ const server = new McpServer({
 let discoveredHost = "127.0.0.1";
 let discoveredPort = 3035;
 let serverDiscovered = false;
+
+// Track the subprocess for the cursor-bridge-server
+let serverProcess: ChildProcess | null = null;
+let serverStartedByMCP = false;
 
 // Function to get the default port from environment variable or default
 function getDefaultServerPort(): number {
@@ -54,10 +59,161 @@ function getDefaultServerHost(): string {
   return "127.0.0.1";
 }
 
-// Server discovery function - similar to what you have in the Chrome extension
-async function discoverServer(): Promise<boolean> {
-  console.log("Starting server discovery process");
+// Function to start the cursor-bridge-server as a subprocess
+async function startServerSubprocess(): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      console.log("Starting cursor-bridge-server as subprocess...");
+      
+      // Check if we're in a development environment by looking for workspace indicators
+      // Look for package.json that indicates this is the cursor-bridge workspace
+      const workspaceRoot = path.join(__dirname, "..", "..");
+      const workspacePackageJson = path.join(workspaceRoot, "package.json");
+      const possibleServerPath = path.join(workspaceRoot, "cursor-bridge-server");
+      const possibleServerExecutable = path.join(possibleServerPath, "dist", "browser-connector.js");
+      
+      // Only use local server if we're in the actual development workspace
+      if (fs.existsSync(workspacePackageJson) && 
+          fs.existsSync(possibleServerPath) && 
+          fs.existsSync(possibleServerExecutable)) {
+        try {
+          const packageJson = JSON.parse(fs.readFileSync(workspacePackageJson, "utf8"));
+          if (packageJson.name === "cursor-bridge" && packageJson.workspaces) {
+            console.log("Found local development workspace, using local server...");
+            serverProcess = spawn("node", [possibleServerExecutable], {
+              stdio: ["ignore", "pipe", "pipe"],
+              detached: false,
+              cwd: possibleServerPath,
+            });
+          } else {
+            throw new Error("Not a development workspace");
+          }
+        } catch (error) {
+          console.log("Not in development workspace, using npx...", error);
+          serverProcess = spawn("npx", ["@mantisware/cursor-bridge-server"], {
+            stdio: ["ignore", "pipe", "pipe"],
+            detached: false,
+          });
+        }
+      } else {
+        // Use npx for published package (production use)
+        console.log("Using npx to start @mantisware/cursor-bridge-server...");
+        serverProcess = spawn("npx", ["@mantisware/cursor-bridge-server"], {
+          stdio: ["ignore", "pipe", "pipe"],
+          detached: false,
+        });
+      }
 
+      serverStartedByMCP = true;
+
+      // Handle server output
+      serverProcess.stdout?.on("data", (data) => {
+        const output = data.toString();
+        console.log(`[Server] ${output}`);
+      });
+
+      serverProcess.stderr?.on("data", (data) => {
+        const error = data.toString();
+        console.error(`[Server Error] ${error}`);
+      });
+
+      // Handle server exit
+      serverProcess.on("exit", (code, signal) => {
+        console.log(`Server process exited with code ${code} and signal ${signal}`);
+        serverProcess = null;
+        serverStartedByMCP = false;
+      });
+
+      // Handle server errors
+      serverProcess.on("error", (error) => {
+        console.error(`Failed to start server process: ${error.message}`);
+        if (error.message.includes("ENOENT") || error.message.includes("command not found")) {
+          console.error("This might be because @mantisware/cursor-bridge-server is not installed or not available via npx.");
+          console.error("Please ensure the package is published to npm or install it locally.");
+        }
+        serverProcess = null;
+        serverStartedByMCP = false;
+        resolve(false);
+      });
+
+      // Give the server a moment to start up
+      setTimeout(() => {
+        if (serverProcess && !serverProcess.killed) {
+          console.log("Server subprocess started successfully");
+          resolve(true);
+        } else {
+          console.error("Server subprocess failed to start");
+          resolve(false);
+        }
+      }, 2000); // Wait 2 seconds for server to start
+
+    } catch (error) {
+      console.error(`Error starting server subprocess: ${error}`);
+      resolve(false);
+    }
+  });
+}
+
+// Function to stop the server subprocess
+function stopServerSubprocess(): void {
+  if (serverProcess && serverStartedByMCP) {
+    console.log("Stopping cursor-bridge-server subprocess...");
+    try {
+      // Try graceful shutdown first
+      serverProcess.kill("SIGTERM");
+      
+      // Force kill after 5 seconds if it doesn't stop
+      setTimeout(() => {
+        if (serverProcess && !serverProcess.killed) {
+          console.log("Force killing server subprocess...");
+          serverProcess.kill("SIGKILL");
+        }
+      }, 5000);
+      
+    } catch (error) {
+      console.error(`Error stopping server subprocess: ${error}`);
+    }
+    
+    serverProcess = null;
+    serverStartedByMCP = false;
+  }
+}
+
+// Helper function to check if a server is running at a specific host:port
+async function checkServerAtAddress(host: string, port: number): Promise<boolean> {
+  try {
+    console.log(`Checking ${host}:${port}...`);
+
+    // Use the identity endpoint for validation
+    const response = await fetch(`http://${host}:${port}/.identity`, {
+      signal: AbortSignal.timeout(1000), // 1 second timeout
+    });
+
+    if (response.ok) {
+      const identity = await response.json();
+
+      // Verify this is actually our server by checking the signature
+      if (identity.signature === "mcp-browser-connector-24x7") {
+        console.log(`Successfully found server at ${host}:${port}`);
+
+        // Save the discovered connection
+        discoveredHost = host;
+        discoveredPort = port;
+        serverDiscovered = true;
+
+        return true;
+      }
+    }
+  } catch (error: any) {
+    // Ignore connection errors during discovery
+    console.error(`Error checking ${host}:${port}: ${error.message}`);
+  }
+  
+  return false;
+}
+
+// Helper function to get discovery targets
+function getDiscoveryTargets(): { hosts: string[], ports: number[] } {
   // Common hosts to try
   const hosts = [getDefaultServerHost(), "127.0.0.1", "localhost"];
 
@@ -72,50 +228,51 @@ async function discoverServer(): Promise<boolean> {
     }
   }
 
+  return { hosts, ports };
+}
+
+// Server discovery function - similar to what you have in the Chrome extension
+async function discoverServer(): Promise<boolean> {
+  console.log("Starting server discovery process");
+
+  const { hosts, ports } = getDiscoveryTargets();
+
   console.log(`Will try hosts: ${hosts.join(", ")}`);
   console.log(`Will try ports: ${ports.join(", ")}`);
 
   // Try to find the server
   for (const host of hosts) {
     for (const port of ports) {
-      try {
-        console.log(`Checking ${host}:${port}...`);
-
-        // Use the identity endpoint for validation
-        const response = await fetch(`http://${host}:${port}/.identity`, {
-          signal: AbortSignal.timeout(1000), // 1 second timeout
-        });
-
-        if (response.ok) {
-          const identity = await response.json();
-
-          // Verify this is actually our server by checking the signature
-          if (identity.signature === "mcp-browser-connector-24x7") {
-            console.log(`Successfully found server at ${host}:${port}`);
-
-            // Save the discovered connection
-            discoveredHost = host;
-            discoveredPort = port;
-            serverDiscovered = true;
-
-            return true;
-          }
-        }
-      } catch (error: any) {
-        // Ignore connection errors during discovery
-        console.error(`Error checking ${host}:${port}: ${error.message}`);
+      const found = await checkServerAtAddress(host, port);
+      if (found) {
+        return true;
       }
     }
   }
 
   console.error("No server found during discovery");
+  
+  // Try to start the server as a subprocess
+  console.log("Attempting to start cursor-bridge-server as subprocess...");
+  const started = await startServerSubprocess();
+  
+  if (started) {
+    // Wait a bit more for the server to fully initialize
+    console.log("Waiting for server to initialize...");
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // Try discovery again
+    console.log("Retrying server discovery after starting subprocess...");
+    return await discoverServer();
+  }
+  
   return false;
 }
 
 // Wrapper function to ensure server connection before making requests
 async function withServerConnection<T>(
   apiCall: () => Promise<T>
-): Promise<T | any> {
+): Promise<T> {
   // Attempt to discover server if not already discovered
   if (!serverDiscovered) {
     const discovered = await discoverServer();
@@ -127,8 +284,7 @@ async function withServerConnection<T>(
             text: "Failed to discover browser connector server. Please ensure it's running.",
           },
         ],
-        isError: true,
-      };
+      } as T;
     }
   }
 
@@ -156,8 +312,7 @@ async function withServerConnection<T>(
               text: `Error after reconnection attempt: ${retryError.message}`,
             },
           ],
-          isError: true,
-        };
+        } as T;
       }
     } else {
       console.error("Rediscovery failed. Could not reconnect to server.");
@@ -168,8 +323,7 @@ async function withServerConnection<T>(
             text: `Failed to reconnect to server: ${error.message}`,
           },
         ],
-        isError: true,
-      };
+      } as T;
     }
   }
 }
@@ -1424,9 +1578,38 @@ server.tool(
   }
 );
 
+// Cleanup function to stop server subprocess on exit
+function setupCleanup(): void {
+  const cleanup = () => {
+    console.log("MCP server shutting down, cleaning up...");
+    stopServerSubprocess();
+  };
+
+  // Handle various exit signals
+  process.on("SIGINT", cleanup);
+  process.on("SIGTERM", cleanup);
+  process.on("exit", cleanup);
+  
+  // Handle uncaught exceptions
+  process.on("uncaughtException", (error) => {
+    console.error("Uncaught exception:", error);
+    cleanup();
+    process.exit(1);
+  });
+  
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled rejection at:", promise, "reason:", reason);
+    cleanup();
+    process.exit(1);
+  });
+}
+
 // Start receiving messages on stdio
 (async () => {
   try {
+    // Set up cleanup handlers
+    setupCleanup();
+    
     // Attempt initial server discovery
     console.error("Attempting initial server discovery on startup...");
     await discoverServer();
@@ -1455,6 +1638,7 @@ server.tool(
     await server.connect(transport);
   } catch (error) {
     console.error("Failed to initialize MCP server:", error);
+    stopServerSubprocess();
     process.exit(1);
   }
 })();

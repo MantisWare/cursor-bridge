@@ -280,7 +280,7 @@
               <a href="#chrome-extension">📥 Chrome Extension Installation</a>
             </li>
             <li><a href="#mcp-setup">⚙️ MCP Configuration</a></li>
-            <li><a href="#server-setup">🖥️ Server Setup</a></li>
+            <li><a href="#server-setup">🖥️ Automatic Server Management</a></li>
             <li><a href="#verification">✅ Verification</a></li>
             <li><a href="#troubleshooting">🆘 Troubleshooting</a></li>
           </ul>
@@ -515,37 +515,36 @@
         <section id="server-setup">
           <h2>🖥️ Server Setup</h2>
 
-          <div class="step">
-            <h4>Step 1: Start the CursorBridge Server</h4>
-            <p>Open a terminal and run the following command:</p>
-            <div class="code-block">
-              <pre>npx @mantisware/cursor-bridge-server@latest</pre>
-            </div>
+          <div class="success">
+            <h4>🎉 Automatic Server Management!</h4>
             <p>
-              This server aggregates logs from the Chrome extension and sets up
-              websockets for screenshot capture.
+              The MCP server now automatically starts the cursor-bridge-server when needed! 
+              No manual server management required - just configure your IDE and you're ready to go!
             </p>
           </div>
 
           <div class="step">
-            <h4>Step 2: Start the MCP Server</h4>
-            <p>In another terminal, run:</p>
-            <div class="code-block">
-              <pre>npx @mantisware/cursor-bridge-mcp@latest</pre>
-            </div>
-            <p>This is the MCP server that your IDE will connect to.</p>
+            <h4>How It Works</h4>
+            <p>
+              When you configure the MCP server in your IDE, it will:
+            </p>
+            <ul>
+              <li>🔍 Automatically detect if a cursor-bridge-server is already running</li>
+              <li>🚀 Start the server automatically if none is found</li>
+              <li>🔄 Handle server discovery and connection management</li>
+              <li>🧹 Clean up the server when the MCP shuts down</li>
+            </ul>
           </div>
 
           <div class="warning">
-            <h4>⚠️ Important Notes</h4>
+            <h4>💡 Pro Tips</h4>
             <ul>
               <li>
-                The cursor-bridge-server runs on <strong>port 3035</strong>
+                The cursor-bridge-server runs on <strong>port 3035</strong> automatically
               </li>
-              <li>Make sure no other processes are using this port</li>
+              <li>No need to manually start servers in separate terminals</li>
               <li>
-                You need <strong>BOTH</strong> servers running for full
-                functionality
+                The MCP server handles everything for you - it's like having a personal assistant! 🤖
               </li>
             </ul>
           </div>
@@ -737,7 +736,7 @@ tail -n 20 -F ~/Library/Application\ Support/Cursor/**/*MCP.log</pre
             🎉
           </p>
           <p>
-            After these steps, open Chrome DevTools and look for the
+            The MCP server will automatically start the cursor-bridge-server when needed - no manual server management required! After these steps, open Chrome DevTools and look for the
             CursorBridgeMCP panel. It's like finding a hidden treasure! 🏴‍☠️
           </p>
         </div>

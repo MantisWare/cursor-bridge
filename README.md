@@ -25,25 +25,25 @@ Hold onto your hats, folks! We've just dropped 1.0.0 and it's absolutely *chef's
 
 ## 🚀 Quickstart Guide (Let's Get This Party Started!)
 
-Ready to turn your AI into a browser wizard? Here's the three-step dance! 💃
+Ready to turn your AI into a browser wizard? Here's the super simple two-step dance! 💃
 
 1. **📥 Install Chrome Extension**: Download and install the CursorBridge Chrome extension
 2. **⚙️ Setup MCP in IDE**: Configure the MCP server in your IDE (Cursor, Windsurf, etc.)
-3. **🖥️ Run Server**: Start the cursor-bridge-server with `npx @mantisware/cursor-bridge-server@latest`, or your client should start it automatically.
+
+**That's it!** 🎉 The MCP server will automatically start the cursor-bridge-server when needed - no manual server management required!
 
 *Different IDEs have different personalities, so check your IDE's docs for the proper setup! They're like snowflakes - each one is unique! ❄️
 
-### 🎯 Pro Tip Alert! 
-You need to install **TWO** servers (don't worry, it's not as scary as it sounds!):
+### 🎯 How It Works Now! 
+The MCP server is now super smart and handles everything automatically:
 
-- **cursor-bridge-server** 🖥️ - Your local Node.js butler that gathers all the browser gossip
-- **cursor-bridge-mcp** 🤖 - The MCP server that lives in your IDE and chats with both the extension and server
+- **cursor-bridge-mcp** 🤖 - The MCP server that lives in your IDE and automatically starts the browser server when needed
+- **cursor-bridge-server** 🖥️ - Your local Node.js butler that gets started automatically by the MCP server
 
-**The Commands:**
-- `npx @mantisware/cursor-bridge-mcp@latest` → Goes in your IDE (like a digital pet!)
-- `npx @mantisware/cursor-bridge-server@latest` → Runs in your terminal (like a background DJ!)
+**The Magic Command:**
+- `npx @mantisware/cursor-bridge-mcp@latest` → Goes in your IDE and handles everything else automatically! ✨
 
-After these three steps, open Chrome DevTools and look for the CursorBridgeMCP panel. It's like finding a hidden treasure! 🏴‍☠️
+After these two steps, open Chrome DevTools and look for the CursorBridgeMCP panel. It's like finding a hidden treasure! 🏴‍☠️
 
 ## 📦 Installation
 

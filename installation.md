@@ -100,17 +100,7 @@ For more on this, check out the docs for these MCP clients:
 - [Claude Desktop](https://claude.ai/desktop)
 - [LibreChat](https://librechat.ai/)
 
-### 3. 🖥️ Run the CursorBridge Server
-
-Aggregates logs from the chrome extension and sets up websockets for screenshot capture. Run this from your terminal within any directory:
-
-```bash
-npx @mantisware/cursor-bridge-server@latest
-```
-
-**Note**: The cursor-bridge-server runs on port 3035. Make sure to terminate any processes running on this port. In a future release, we will handle this gracefully.
-
-### 4. 🔍 Open the Chrome Developer Console
+### 3. 🔍 Open the Chrome Developer Console
 
 Right click on any web page and click 'Inspect' to open the Chrome dev tools. Once open, logs will be accessible to the MCP client.
 
@@ -126,7 +116,7 @@ You can navigate to the CursorBridge panel to:
 
 **You've successfully installed and configured CursorBridge MCP!** 🎉
 
-After these steps, open Chrome DevTools and look for the CursorBridgeMCP panel. It's like finding a hidden treasure! 🏴‍☠️
+The MCP server will automatically start the cursor-bridge-server when needed - no manual server management required! After these steps, open Chrome DevTools and look for the CursorBridgeMCP panel. It's like finding a hidden treasure! 🏴‍☠️
 
 ## ⚙️ Cursor IDE Configuration (The Setup Magic!)
 
