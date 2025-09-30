@@ -2,7 +2,7 @@
 
 > The brain of the operation! Your AI's gateway to browser superpowers! 🧠✨
 
-**Version: 1.0.0** 🚀
+**Version: 1.0.9** 🚀
 
 Meet the CursorBridge MCP Server - the Model Context Protocol (MCP) server that turns your AI into a browser debugging wizard! This server works hand-in-hand with the CursorBridge Server to give your AI the ability to see, analyze, and interact with everything happening in your browser. It's like giving your AI a pair of super-powered glasses! 👓🎯
 
@@ -19,8 +19,9 @@ Meet the CursorBridge MCP Server - the Model Context Protocol (MCP) server that 
 ## 📋 Prerequisites (What You Need!)
 
 - 🟢 **Node.js 14 or higher** (the foundation of everything!)
-- 🖥️ **CursorBridge Server running** (the middleman that makes it all work!)
 - 🌐 **Chrome or Chromium browser installed** (required for audit functionality - because we need to see what you're seeing!)
+
+**Note**: The CursorBridge Server will be started automatically by the MCP server when needed - no manual setup required! 🚀
 
 ## 📦 Installation (Let's Get This Party Started!)
 
@@ -38,19 +39,13 @@ npm install -g @mantisware/cursor-bridge-mcp
 
 ## 🎮 Usage (The Fun Part!)
 
-1. **Fire Up the Server**: First, make sure the CursorBridge Server is running:
-
-```bash
-npx @mantisware/cursor-bridge-server
-```
-
-2. **Start the MCP Magic**: Then start the MCP server:
+1. **Start the MCP Magic**: Just start the MCP server - it handles everything else automatically!
 
 ```bash
 npx @mantisware/cursor-bridge-mcp
 ```
 
-3. **Watch the Magic Happen**: The MCP server will connect to the CursorBridge Server and provide these amazing capabilities:
+2. **Watch the Magic Happen**: The MCP server will automatically start the CursorBridge Server and provide these amazing capabilities:
 
 - 📝 **Console Log Retrieval**: Get all the juicy console details
 - 🌐 **Network Request Monitoring**: Track every network call

@@ -2,7 +2,7 @@
 
 > The ultimate browser whisperer! Your AI's best friend for capturing and managing browser events, logs, and screenshots! 🎯
 
-**Version: 1.0.0** 🚀
+**Version: 1.0.9** 🚀
 
 Meet the CursorBridge Server - the powerful middleware that makes all the browser magic happen! This server works hand-in-hand with the CursorBridge Chrome Extension to give your AI superpowers for comprehensive browser debugging and analysis. It's like having a super-attentive assistant that never misses a thing! 👀✨
 
@@ -31,6 +31,10 @@ npm install -g @mantisware/cursor-bridge-server
 ```
 
 ## 🎮 Usage (The Fun Part!)
+
+**Note**: This server is now automatically started by the CursorBridge MCP server when needed! No manual setup required! 🚀
+
+If you need to run it manually for development or testing:
 
 1. **Fire Up the Server**: Start your server with this magic command:
 

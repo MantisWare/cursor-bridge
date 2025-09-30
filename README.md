@@ -10,10 +10,11 @@ Ever wished your AI could actually *see* what's happening in your browser? Well,
 
 This nifty little tool uses Anthropic's Model Context Protocol (MCP) to turn your AI into a browser whisperer that can capture, analyze, and interact with everything happening in your Chrome tabs.
 
-## 🎉 What's New in 1.0.0!
+## 🎉 What's New in 1.0.9!
 
-Hold onto your hats, folks! We've just dropped 1.0.0 and it's absolutely *chef's kiss* 👨‍🍳💋 Here's what's cooking:
+Hold onto your hats, folks! We've just dropped 1.0.9 and it's absolutely *chef's kiss* 👨‍🍳💋 Here's what's cooking:
 
+- 🚀 **Automatic Server Management**: The MCP server now automatically starts the cursor-bridge-server when needed - no more manual server management! Just configure your IDE and you're ready to go! ✨
 - 🎯 **Auto-Paste Magic**: Enable "Allow Auto-Paste into Cursor" in the DevTools panel and watch screenshots magically appear in Cursor! (Pro tip: click into the Agent input field first, or the magic won't work! ✨)
 - 🔍 **Lighthouse Suite**: We've integrated a whole arsenal of SEO, performance, accessibility, and best practice analysis tools. Your AI is now basically a web development detective! 🕵️‍♀️
 - ⚡ **NextJS Superpowers**: Added a NextJS-specific prompt to turbocharge your SEO game. Because why settle for good when you can be *amazing*?
