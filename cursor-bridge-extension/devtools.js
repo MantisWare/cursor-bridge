@@ -989,42 +989,64 @@ async function setupWebSocket() {
           // console.log("Chrome Extension: Received heartbeat response");
         } else if (message.type === "take-screenshot") {
           console.log("Chrome Extension: Taking screenshot...");
-          // Capture screenshot of the current tab
-          chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
-            if (chrome.runtime.lastError) {
-              console.error(
-                "Chrome Extension: Screenshot capture failed:",
-                chrome.runtime.lastError
-              );
-              ws.send(
-                JSON.stringify({
-                  type: "screenshot-error",
-                  error: chrome.runtime.lastError.message,
-                  requestId: message.requestId,
-                })
-              );
-              return;
-            }
-
-            console.log("Chrome Extension: Screenshot captured successfully");
-            // Just send the screenshot data, let the server handle paths
-            const response = {
-              type: "screenshot-data",
-              data: dataUrl,
+          // Send screenshot request to background script
+          safeSendMessage(
+            {
+              type: "CAPTURE_SCREENSHOT",
+              tabId: chrome.devtools.inspectedWindow.tabId,
+              screenshotPath: settings.screenshotPath,
               requestId: message.requestId,
-              // Only include path if it's configured in settings
-              ...(settings.screenshotPath && { path: settings.screenshotPath }),
-              // Include auto-paste setting
-              autoPaste: settings.allowAutoPaste,
-            };
+            },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                console.error(
+                  "Chrome Extension: Error communicating with background script:",
+                  chrome.runtime.lastError
+                );
+                ws.send(
+                  JSON.stringify({
+                    type: "screenshot-error",
+                    error: chrome.runtime.lastError.message,
+                    requestId: message.requestId,
+                  })
+                );
+                return;
+              }
 
-            console.log("Chrome Extension: Sending screenshot data response", {
-              ...response,
-              data: "[base64 data]",
-            });
+              if (response && response.success) {
+                console.log("Chrome Extension: Screenshot captured successfully");
+                // Send the screenshot data to the server via WebSocket
+                const wsResponse = {
+                  type: "screenshot-data",
+                  data: response.dataUrl,
+                  requestId: message.requestId,
+                  // Only include path if it's configured in settings
+                  ...(settings.screenshotPath && { path: settings.screenshotPath }),
+                  // Include auto-paste setting
+                  autoPaste: settings.allowAutoPaste,
+                };
 
-            ws.send(JSON.stringify(response));
-          });
+                console.log("Chrome Extension: Sending screenshot data response", {
+                  ...wsResponse,
+                  data: "[base64 data]",
+                });
+
+                ws.send(JSON.stringify(wsResponse));
+              } else {
+                console.error(
+                  "Chrome Extension: Screenshot capture failed:",
+                  response?.error || "Unknown error"
+                );
+                ws.send(
+                  JSON.stringify({
+                    type: "screenshot-error",
+                    error: response?.error || "Screenshot capture failed",
+                    requestId: message.requestId,
+                  })
+                );
+              }
+            }
+          );
         } else if (message.type === "get-current-url") {
           console.log("Chrome Extension: Received request for current URL");
 

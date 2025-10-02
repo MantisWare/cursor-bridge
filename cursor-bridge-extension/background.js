@@ -33,39 +33,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === "CAPTURE_SCREENSHOT" && message.tabId) {
-    // First get the server settings
-    chrome.storage.local.get(["browserConnectorSettings"], (result) => {
-      const settings = result.browserConnectorSettings || {
-        serverHost: "localhost",
-        serverPort: 3035,
-      };
-
-      // Validate server identity first
-      validateServerIdentity(settings.serverHost, settings.serverPort)
-        .then((isValid) => {
-          if (!isValid) {
-            console.error(
-              "Cannot capture screenshot: Not connected to a valid browser tools server"
-            );
-            sendResponse({
-              success: false,
-              error:
-                "Not connected to a valid browser tools server. Please check your connection settings.",
-            });
-            return;
-          }
-
-          // Continue with screenshot capture
-          captureAndSendScreenshot(message, settings, sendResponse);
-        })
-        .catch((error) => {
-          console.error("Error validating server:", error);
-          sendResponse({
-            success: false,
-            error: "Failed to validate server identity: " + error.message,
-          });
-        });
-    });
+    // Capture screenshot and return data URL to DevTools
+    captureScreenshotForDevTools(message, sendResponse);
     return true; // Required to use sendResponse asynchronously
   }
 });
@@ -429,6 +398,66 @@ function captureAndSendScreenshot(message, settings, sendResponse) {
                 error: error.message || "Failed to save screenshot",
               });
             });
+        }
+      );
+    });
+  });
+}
+
+// Function to capture screenshot for DevTools (returns data URL)
+function captureScreenshotForDevTools(message, sendResponse) {
+  // Get the inspected window's tab
+  chrome.tabs.get(message.tabId, (tab) => {
+    if (chrome.runtime.lastError) {
+      console.error("Error getting tab:", chrome.runtime.lastError);
+      sendResponse({
+        success: false,
+        error: chrome.runtime.lastError.message,
+      });
+      return;
+    }
+
+    // Get all windows to find the one containing our tab
+    chrome.windows.getAll({ populate: true }, (windows) => {
+      const targetWindow = windows.find((w) =>
+        w.tabs.some((t) => t.id === message.tabId)
+      );
+
+      if (!targetWindow) {
+        console.error("Could not find window containing the inspected tab");
+        sendResponse({
+          success: false,
+          error: "Could not find window containing the inspected tab",
+        });
+        return;
+      }
+
+      // Capture screenshot of the window containing our tab
+      chrome.tabs.captureVisibleTab(
+        targetWindow.id,
+        { format: "png" },
+        (dataUrl) => {
+          // Ignore DevTools panel capture error if it occurs
+          if (
+            chrome.runtime.lastError &&
+            !chrome.runtime.lastError.message.includes("devtools://")
+          ) {
+            console.error(
+              "Error capturing screenshot:",
+              chrome.runtime.lastError
+            );
+            sendResponse({
+              success: false,
+              error: chrome.runtime.lastError.message,
+            });
+            return;
+          }
+
+          console.log("Screenshot captured successfully for DevTools");
+          sendResponse({
+            success: true,
+            dataUrl: dataUrl,
+          });
         }
       );
     });

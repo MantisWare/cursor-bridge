@@ -1,6 +1,6 @@
 {
     "name": "CursorBridge MCP",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Turn your AI into a browser-savvy superhero! 🦸‍♂️ Capture console logs, network requests, screenshots, and more! 👓✨",
     "manifest_version": 3,
     "devtools_page": "devtools.html",
